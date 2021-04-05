@@ -37,7 +37,7 @@ function xScale(data, chosenXAxis) {
 function yScale(data, chosenYAxis) {
   var yLinearScale = d3.scaleLinear()
       .domain([d3.min(data, d => d[chosenYAxis]) * 0.8,
-      d3.max(censusData, d => d[chosenYAxis]) * 1.2
+      d3.max(data, d => d[chosenYAxis]) * 1.2
       ])
       .range([height, 0]);
 
@@ -45,7 +45,7 @@ function yScale(data, chosenYAxis) {
 
 }
 
-function renderAxes(newXScale, xAxis) {
+function renderXAxes(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
 
   xAxis.transition()
@@ -136,7 +136,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
       .enter()
       .append("circle")
       .attr("cx", d => xLinearScale(d[chosenXAxis]))
-      .attr("cy", d => yLinearScale(d.healthcare))
+      .attr("cy", d => yLinearScale(d[chosenYAxis]))
       .attr("r", 10)
       .attr("fill", "slateblue")
       .attr("opacity", ".5");
@@ -148,12 +148,8 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
       .append("text")
       .text(d => d.abbr)
       .attr("x", d => xLinearScale(d[chosenXAxis]))
-      .attr("y", d => yLinearScale(d[chosenYAxis]) + 4)
-      .attr("font-family", "sans-serif")
-      .attr("text-anchor", "middle")
-      .attr("font-size", "10px")
-      .style("fill", "white")
-      .attr("font-weight", "bold");
+      .attr("y", d => yLinearScale(d[chosenYAxis]))
+      .classed("stateText", true)
   
     // Create group for x-axis labels
     var xlabelsGroup = chartGroup.append("g")
@@ -185,7 +181,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
         .attr("transform", "rotate(-90)");
 
     var healthcareLabel = ylabelsGroup.append("text")
-        .attr("y", 0 - margin.left + 15)
+        .attr("y", 0 - margin.left + 55)
         .attr("x", 0 - (height / 2))
         .attr("value", "healthcare") // value to grab for event listener
         .classed("active", true)
@@ -199,7 +195,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
         .text("Smokes (%)");
 
     var obesityLabel = ylabelsGroup.append("text")
-        .attr("y", 0 - margin.left + 55)
+        .attr("y", 0 - margin.left + 15)
         .attr("x", 0 - (height / 2))
         .attr("value", "poverty")
         .classed("inactive", true)
@@ -276,7 +272,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
 
         // functions here found above csv import
         // updates x scale for new data
-        yLinearScale = xScale(data, chosenYAxis);
+        yLinearScale = yScale(data, chosenYAxis);
 
         // updates x axis with transition
         yAxis = renderAxes(yLinearScale, yAxis);
@@ -296,10 +292,10 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
             .classed("active", false)
             .classed("inactive", true);
         } else if (chosenYAxis === "obesity"){
-          obesityLabel
+          healthcareLabel
             .classed("active", false)
             .classed("inactive", true);
-          healthcareLabel
+          obesityLabel
             .classed("active", true)
             .classed("inactive", false);
           smokesLabel
