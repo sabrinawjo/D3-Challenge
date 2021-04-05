@@ -83,6 +83,24 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
   return circlesGroup;
 }
 
+function renderXCircleText(textCircles, newXScale, chosenXAxis) {
+
+  textCircles.transition()
+      .duration(1000)
+      .attr("x", d => newXScale(d[chosenXAxis]));
+
+  return textCircles;
+}
+
+function renderYCircleText(textCircles, newYScale, chosenYAxis) {
+
+  textCircles.transition()
+      .duration(1000)
+      .attr("y", d => newYScale(d[chosenYAxis]));
+
+  return textCircles;
+}
+
 /////////////////////////////////////////////////
 d3.csv("assets/data/data.csv").then(function(data, err) {
     if (err) throw err;
@@ -138,8 +156,8 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
       .attr("cx", d => xLinearScale(d[chosenXAxis]))
       .attr("cy", d => yLinearScale(d[chosenYAxis]))
       .attr("r", 10)
-      .attr("fill", "slateblue")
-      .attr("opacity", ".5");
+      .attr("opacity", ".5")
+      .classed("stateCircle", true);
 
     var textCircles = chartGroup.append("g")
       .selectAll("text")
@@ -219,11 +237,12 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
           xLinearScale = xScale(data, chosenXAxis);
   
           // updates x axis with transition
-          xAxis = renderAxes(xLinearScale, xAxis);
+          xAxis = renderXAxes(xLinearScale, xAxis);
   
           // updates circles with new x values
           circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis);
-  
+          textCircles = renderXCircleText(textCircles, xLinearScale, chosenXAxis);
+
           // changes classes to change bold text
           if (chosenXAxis === "age") {
             ageLabel
@@ -275,10 +294,11 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
         yLinearScale = yScale(data, chosenYAxis);
 
         // updates x axis with transition
-        yAxis = renderAxes(yLinearScale, yAxis);
+        yAxis = renderYAxes(yLinearScale, yAxis);
 
         // updates circles with new x values
         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
+        textCircles = renderYCircleText(textCircles, yLinearScale, chosenYAxis);
 
         // changes classes to change bold text
         if (chosenYAxis === "smokes") {
@@ -317,4 +337,5 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
   }).catch(function(error) {
     console.log(error);
   });
+
   
