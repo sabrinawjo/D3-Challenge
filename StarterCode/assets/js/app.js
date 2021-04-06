@@ -78,7 +78,7 @@ function renderYCircles(circlesGroup, newYScale, chosenYAxis) {
 
   circlesGroup.transition()
     .duration(1000)
-    .attr("cx", d => newXScale(d[chosenYAxis]));
+    .attr("cy", d => newYScale(d[chosenYAxis]));
 
   return circlesGroup;
 }
@@ -215,7 +215,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
     var obesityLabel = ylabelsGroup.append("text")
         .attr("y", 0 - margin.left + 15)
         .attr("x", 0 - (height / 2))
-        .attr("value", "poverty")
+        .attr("value", "obesity")
         .classed("inactive", true)
         .text("Obesity (%)");
 
@@ -230,12 +230,13 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
           // replaces chosenXAxis with value
           chosenXAxis = value;
   
-          // console.log(chosenXAxis)
+          console.log(chosenXAxis)
   
           // functions here found above csv import
           // updates x scale for new data
           xLinearScale = xScale(data, chosenXAxis);
-  
+          console.log(xLinearScale)
+
           // updates x axis with transition
           xAxis = renderXAxes(xLinearScale, xAxis);
   
@@ -282,6 +283,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
     .on("click", function() {
       // get value of selection
       var value = d3.select(this).attr("value");
+      console.log(value)
       if (value !== chosenYAxis) {
 
         // replaces chosenXAxis with value
@@ -299,7 +301,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
         // updates circles with new x values
         circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis);
         textCircles = renderYCircleText(textCircles, yLinearScale, chosenYAxis);
-
+        console.log(chosenYAxis)
         // changes classes to change bold text
         if (chosenYAxis === "smokes") {
           smokesLabel
@@ -312,6 +314,7 @@ d3.csv("assets/data/data.csv").then(function(data, err) {
             .classed("active", false)
             .classed("inactive", true);
         } else if (chosenYAxis === "obesity"){
+          console.log(chosenYAxis)
           healthcareLabel
             .classed("active", false)
             .classed("inactive", true);
